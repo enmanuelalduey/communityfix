@@ -1,217 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CommunityFix - Reportes</title>
 
-    <style>
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Segoe UI',sans-serif;
-        }
-
-        body{
-            background:#f4f7fb;
-        }
-
-        header{
-            background:#0D47A1;
-            color:white;
-            padding:20px;
-            text-align:center;
-        }
-
-        .contenedor{
-            width:90%;
-            max-width:1200px;
-            margin:30px auto;
-        }
-
-        .card{
-            background:white;
-            border-radius:15px;
-            padding:25px;
-            box-shadow:0 5px 15px rgba(0,0,0,.1);
-            margin-bottom:20px;
-        }
-
-        h2{
-            color:#0D47A1;
-            margin-bottom:15px;
-        }
-
-        input,
-        textarea,
-        select{
-
-            width:100%;
-            padding:12px;
-            margin-bottom:15px;
-            border:1px solid #ddd;
-            border-radius:10px;
-
-        }
-
-        textarea{
-            resize:none;
-            height:120px;
-        }
-
-        button{
-
-            background:#2E7D32;
-            color:white;
-            border:none;
-            padding:12px 20px;
-            border-radius:10px;
-            cursor:pointer;
-
-        }
-
-        button:hover{
-            background:#1b5e20;
-        }
-
-        .reporte{
-
-            border-left:5px solid #0D47A1;
-            background:#eef4ff;
-            padding:15px;
-            margin-top:10px;
-            border-radius:10px;
-
-        }
-
-        .estado{
-            display:inline-block;
-            margin-top:10px;
-            padding:5px 12px;
-            border-radius:20px;
-            background:#ffd54f;
-            font-size:14px;
-            font-weight:bold;
-        }
-
-    </style>
-
+    <link rel="stylesheet" href="../activos/css/style.css">
 </head>
 
 <body>
 
-<header>
-    <h1>🏙️ CommunityFix</h1>
-    <p>Gestión de Reportes Comunitarios</p>
-</header>
+    <header>
+        <h1>🏙️ CommunityFix</h1>
+        <p>Gestión de Reportes Comunitarios</p>
+    </header>
 
-<div class="contenedor">
+    <div class="contenedor">
 
-    <div class="card">
+        <div class="card">
 
-        <h2>Nuevo Reporte</h2>
+            <h2>Nuevo Reporte</h2>
 
-        <select id="categoria">
+            <select id="categoria">
+                <option value="">Seleccione una categoría</option>
+                <option>Basura Acumulada</option>
+                <option>Fuga de Agua</option>
+                <option>Alumbrado Averiado</option>
+                <option>Calles Dañadas</option>
+                <option>Alcantarilla Obstruida</option>
+            </select>
 
-            <option value="">Seleccione una categoría</option>
+            <textarea
+                id="descripcion"
+                placeholder="Describe el problema">
+            </textarea>
 
-            <option>Basura Acumulada</option>
-            <option>Fuga de Agua</option>
-            <option>Alumbrado Averiado</option>
-            <option>Calles Dañadas</option>
-            <option>Alcantarilla Obstruida</option>
+            <button onclick="agregarReporte()">
+                Crear Reporte
+            </button>
 
-        </select>
+        </div>
 
-        <textarea
-            id="descripcion"
-            placeholder="Describe el problema">
-        </textarea>
+        <div class="card">
 
-        <button onclick="agregarReporte()">
-            Crear Reporte
-        </button>
+            <h2>Lista de Reportes</h2>
 
-    </div>
+            <div id="listaReportes">
 
-    <div class="card">
-
-        <h2>Lista de Reportes</h2>
-
-        <div id="listaReportes">
+            </div>
 
         </div>
 
     </div>
 
-</div>
-
-<script>
-
-let reportes = [];
-
-function agregarReporte(){
-
-    let categoria =
-    document.getElementById("categoria").value;
-
-    let descripcion =
-    document.getElementById("descripcion").value;
-
-    if(categoria === "" || descripcion === ""){
-
-        alert("Complete todos los campos");
-
-        return;
-    }
-
-    reportes.push({
-
-        categoria:categoria,
-        descripcion:descripcion,
-        estado:"Pendiente"
-
-    });
-
-    mostrarReportes();
-
-    document.getElementById("categoria").value = "";
-    document.getElementById("descripcion").value = "";
-
-}
-
-function mostrarReportes(){
-
-    let lista =
-    document.getElementById("listaReportes");
-
-    lista.innerHTML = "";
-
-    reportes.forEach(function(reporte){
-
-        lista.innerHTML += `
-
-            <div class="reporte">
-
-                <h3>${reporte.categoria}</h3>
-
-                <p>${reporte.descripcion}</p>
-
-                <span class="estado">
-                    ${reporte.estado}
-                </span>
-
-            </div>
-
-        `;
-
-    });
-
-}
-
-</script>
+    <script src="../activos/js/main.js"></script>
 
 </body>
 </html>
