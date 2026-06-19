@@ -20,7 +20,7 @@ Desarrollar una plataforma que permita a los ciudadanos reportar problemas comun
 - CSS3
 - JavaScript
 - Node.js
-- SQL Server
+- MySQL 
 - GitHub
 
 ---
@@ -28,7 +28,7 @@ Desarrollar una plataforma que permita a los ciudadanos reportar problemas comun
 ## Requisitos previos
 
 - Node.js instalado
-- SQL Server instalado
+- MySQL   instalado
 - Visual Studio Code
 - Git
   
