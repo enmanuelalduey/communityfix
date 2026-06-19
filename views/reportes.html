@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CommunityFix - Reportes</title>
+
+    <link rel="stylesheet" href="../activos/css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>🏙️ CommunityFix</h1>
+        <p>Gestión de Reportes Comunitarios</p>
+    </header>
+
+    <div class="contenedor">
+
+        <div class="card">
+
+            <h2>Nuevo Reporte</h2>
+
+            <select id="categoria">
+                <option value="">Seleccione una categoría</option>
+                <option>Basura Acumulada</option>
+                <option>Fuga de Agua</option>
+                <option>Alumbrado Averiado</option>
+                <option>Calles Dañadas</option>
+                <option>Alcantarilla Obstruida</option>
+            </select>
+
+            <textarea
+                id="descripcion"
+                placeholder="Describe el problema">
+            </textarea>
+
+            <button onclick="agregarReporte()">
+                Crear Reporte
+            </button>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Lista de Reportes</h2>
+
+            <div id="listaReportes">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="../activos/js/main.js"></script>
+
+</body>
+</html>
