@@ -1,58 +1,71 @@
 <?php
-require_once '../services/AuthService.php';
+require_once __DIR__ . '/../services/AuthService.php';
 
 class AuthController {
-    private $authService;
+    private AuthService $authService;
 
     public function __construct() {
         $this->authService = new AuthService();
     }
 
-    public function login() {
-        $error = "";
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $correo = trim($_POST['correo']);
-            $contrasena = $_POST['contrasena'];
+    public function login(): void {
+        $error = '';
+
+        if (isset($_SESSION['id_usuario'])) {
+        header('Location: /communityfix/views/dashboard.php');
+        exit();
+        
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $correo    = trim($_POST['correo']    ?? '');
+            $contrasena = $_POST['contrasena'] ?? '';
 
             if (empty($correo) || empty($contrasena)) {
-                $error = "Por favor completa todos los campos.";
+                $error = 'Por favor completa todos los campos.';
+            } elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+                $error = 'Ingresa un correo válido.';
+            } elseif ($this->authService->login($correo, $contrasena)) {
+                header('Location: /communityfix/views/dashboard.php');
+                exit();
             } else {
-                $resultado = $this->authService->login($correo, $contrasena);
-                if ($resultado) {
-                    header("Location: ../index.php");
-                    exit();
-                } else {
-                    $error = "Correo o contraseña incorrectos.";
-                }
+                $error = 'Correo o contraseña incorrectos.';
             }
         }
-        include '../views/login.html';
+
+        include __DIR__ . '/../views/login.php';
     }
 
-    public function registro() {
-        $error = "";
-        $exito = "";
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $nombre = trim($_POST['nombre']);
-            $correo = trim($_POST['correo']);
-            $contrasena = $_POST['contrasena'];
+    public function registro(): void {
+        $error = '';
+        $exito = '';
 
-            if (empty($nombre) || empty($correo) || empty($contrasena)) {
-                $error = "Por favor completa todos los campos.";
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nombre    = trim($_POST['nombre']    ?? '');
+            $correo    = trim($_POST['correo']    ?? '');
+            $contrasena = $_POST['contrasena'] ?? '';
+            $confirmar  = $_POST['confirmar']  ?? '';
+
+            if (empty($nombre) || empty($correo) || empty($contrasena) || empty($confirmar)) {
+                $error = 'Por favor completa todos los campos.';
+            } elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+                $error = 'Ingresa un correo electrónico válido.';
+            } elseif (strlen($contrasena) < 6) {
+                $error = 'La contraseña debe tener al menos 6 caracteres.';
+            } elseif ($contrasena !== $confirmar) {
+                $error = 'Las contraseñas no coinciden.';
+            } elseif ($this->authService->registro($nombre, $correo, $contrasena)) {
+                header('Location: /communityfix/?action=login&registro=1');
+                exit();
             } else {
-                $resultado = $this->authService->registro($nombre, $correo, $contrasena);
-                if ($resultado) {
-                    $exito = "Usuario registrado correctamente.";
-                } else {
-                    $error = "El correo ya está registrado.";
-                }
+                $error = 'Este correo ya está registrado.';
             }
         }
-        include '../views/registro.html';
+
+        include __DIR__ . '/../views/registro.php';
     }
 
-    public function logout() {
+    public function logout(): void {
         $this->authService->logout();
     }
 }
-?>

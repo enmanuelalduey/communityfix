@@ -1,22 +1,26 @@
 <?php
-session_start();
-require_once 'controllers/AuthController.php';
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+require_once __DIR__ . '/controllers/AuthController.php';
+require_once __DIR__ . '/controllers/ReporteController.php';
 
 $action = $_GET['action'] ?? 'login';
-$controller = new AuthController();
 
 switch ($action) {
-    case 'login':
-        $controller->login();
-        break;
     case 'registro':
-        $controller->registro();
+        (new AuthController())->registro();
         break;
     case 'logout':
-        $controller->logout();
+        (new AuthController())->logout();
         break;
+    case 'nuevo-reporte':
+        (new ReporteController())->nuevo();
+        break;
+    case 'reportes':
+        (new ReporteController())->listar();
+        break;
+    case 'login':
     default:
-        $controller->login();
+        (new AuthController())->login();
         break;
 }
-?>

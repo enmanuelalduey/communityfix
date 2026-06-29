@@ -1,24 +1,24 @@
 <?php
 class Database {
-    private $host = "localhost";
-    private $dbname = "communityfix";
-    private $usuario = "root";
+    private $host     = "localhost";
+    private $dbname   = "communityfix";
+    private $usuario  = "root";
     private $password = "";
-    private $conexion;
 
-    public function conectar() {
-        $this->conexion = null;
+    public function conectar(): PDO {
         try {
-            $this->conexion = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->dbname . ";charset=utf8",
+            $pdo = new PDO(
+                "mysql:host={$this->host};dbname={$this->dbname};charset=utf8",
                 $this->usuario,
                 $this->password
             );
-            $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE,            PDO::ERRMODE_EXCEPTION);
+            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES,   false);
+            return $pdo;
         } catch (PDOException $e) {
-            die("Error de conexión: " . $e->getMessage());
+            http_response_code(500);
+            die(json_encode(['error' => 'Error de conexión a la base de datos.']));
         }
-        return $this->conexion;
     }
 }
-?>

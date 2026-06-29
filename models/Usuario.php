@@ -1,15 +1,14 @@
 <?php
-require_once '../data/Database.php';
+require_once __DIR__ . '/../data/Database.php';
 
 class Usuario {
-    private $db;
+    private PDO $db;
 
     public function __construct() {
-        $database = new Database();
-        $this->db = $database->conectar();
+        $this->db = (new Database())->conectar();
     }
 
-    public function crear($nombre, $correo, $contrasena) {
+    public function crear(string $nombre, string $correo, string $contrasena): bool {
         $hash = password_hash($contrasena, PASSWORD_BCRYPT);
         $stmt = $this->db->prepare(
             "INSERT INTO Usuarios (nombre, correo, contrasena, id_rol) VALUES (?, ?, ?, 2)"
@@ -17,20 +16,17 @@ class Usuario {
         return $stmt->execute([$nombre, $correo, $hash]);
     }
 
-    public function buscarPorCorreo($correo) {
-        $stmt = $this->db->prepare(
-            "SELECT * FROM Usuarios WHERE correo = ?"
-        );
+    public function buscarPorCorreo(string $correo): array|false {
+        $stmt = $this->db->prepare("SELECT * FROM Usuarios WHERE correo = ? LIMIT 1");
         $stmt->execute([$correo]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch();
     }
 
-    public function listar() {
+    public function listar(): array {
         $stmt = $this->db->prepare(
-            "SELECT id_usuario, nombre, correo, id_rol FROM Usuarios"
+            "SELECT id_usuario, nombre, correo, id_rol FROM Usuarios ORDER BY id_usuario DESC"
         );
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll();
     }
 }
-?>

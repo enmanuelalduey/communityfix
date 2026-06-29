@@ -1,5 +1,5 @@
 <?php
-require_once '../models/Usuario.php';
+require_once __DIR__ . '/../models/Usuario.php';
 
 class AuthService {
     private $usuarioModel;
@@ -33,7 +33,7 @@ class AuthService {
     public function logout() {
         session_start();
         session_destroy();
-        header("Location: ../index.php");
+        header("Location: /communityfix/?action=login");
         exit();
     }
 }
