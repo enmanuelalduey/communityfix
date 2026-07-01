@@ -10,20 +10,26 @@ class AuthService {
 
     public function login($correo, $contrasena) {
         $usuario = $this->usuarioModel->buscarPorCorreo($correo);
-        
-        if ($usuario && password_verify($contrasena, $usuario['contrasena'])) {
-            session_start();
-            $_SESSION['id_usuario'] = $usuario['id_usuario'];
-            $_SESSION['nombre'] = $usuario['nombre'];
-            $_SESSION['id_rol'] = $usuario['id_rol'];
-            return true;
+
+        if (!$usuario || !password_verify($contrasena, $usuario['contrasena'])) {
+            return false;
         }
-        return false;
+
+        if (session_status() === PHP_SESSION_NONE && php_sapi_name() !== 'cli') {
+            session_start();
+        }
+
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $_SESSION['id_usuario'] = $usuario['id_usuario'];
+            $_SESSION['nombre']     = $usuario['nombre'];
+            $_SESSION['id_rol']     = $usuario['id_rol'];
+        }
+
+        return true;
     }
 
     public function registro($nombre, $correo, $contrasena) {
         $existe = $this->usuarioModel->buscarPorCorreo($correo);
-        
         if ($existe) {
             return false;
         }
@@ -31,7 +37,7 @@ class AuthService {
     }
 
     public function logout() {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
         session_destroy();
         header("Location: /communityfix/?action=login");
         exit();
