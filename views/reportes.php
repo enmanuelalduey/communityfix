@@ -1,4 +1,8 @@
-<?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
+<?php 
+if (session_status() === PHP_SESSION_NONE) session_start();
+require_once __DIR__ . '/../models/Comentario.php';
+$comentarioModel = new Comentario();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -63,6 +67,7 @@
     <?php else: ?>
     <div class="space-y-4">
         <?php foreach ($reportes as $reporte): ?>
+        <?php $comentarios = $comentarioModel->listarPorReporte($reporte['id_reporte']); ?>
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
             <div class="flex justify-between items-start">
                 <div class="flex-1">
@@ -89,7 +94,7 @@
                     <p class="text-sm text-gray-500 mb-2">
                         <?= htmlspecialchars($reporte['descripcion']) ?>
                     </p>
-                    <div class="flex items-center gap-4 text-xs text-gray-400">
+                    <div class="flex items-center gap-4 text-xs text-gray-400 mb-3">
                         <span class="flex items-center gap-1">
                             <span class="material-symbols-outlined" style="font-size:14px;">location_on</span>
                             <?= htmlspecialchars($reporte['ubicacion']) ?>
@@ -99,6 +104,41 @@
                             <?= date('d/m/Y H:i', strtotime($reporte['fecha_reporte'])) ?>
                         </span>
                     </div>
+
+                    <!-- Boton comentarios -->
+                    <button onclick="toggleComentarios(<?= $reporte['id_reporte'] ?>)"
+                            class="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-all">
+                        <span class="material-symbols-outlined" style="font-size:16px;">chat</span>
+                        Comentarios (<?= count($comentarios) ?>)
+                    </button>
+
+                    <!-- Seccion comentarios -->
+                    <div id="comentarios-<?= $reporte['id_reporte'] ?>" class="hidden mt-4">
+                        <div class="space-y-2 mb-3">
+                            <?php if (empty($comentarios)): ?>
+                                <p class="text-xs text-gray-400">No hay comentarios aún.</p>
+                            <?php else: ?>
+                                <?php foreach ($comentarios as $c): ?>
+                                <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                                    <p class="text-xs font-semibold <?= $c['nombre'] === $_SESSION['nombre'] ? 'text-blue-700' : 'text-red-600' ?>">
+                                        <?= htmlspecialchars($c['nombre']) ?>
+                                        <?= $c['nombre'] === $_SESSION['nombre'] ? '(Tú)' : '(Admin)' ?>
+                                    </p>
+                                    <p class="text-sm text-gray-700 mt-1"><?= htmlspecialchars($c['comentario']) ?></p>
+                                    <p class="text-xs text-gray-400 mt-1"><?= date('d/m/Y H:i', strtotime($c['fecha'])) ?></p>
+                                </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        <form method="POST" action="/communityfix/?action=comentar" class="flex gap-2">
+                            <input type="hidden" name="id_reporte" value="<?= $reporte['id_reporte'] ?>">
+                            <input type="text" name="comentario" placeholder="Escribe un comentario..."
+                                   class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-blue-500">
+                            <button type="submit" class="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700">
+                                Enviar
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -106,5 +146,12 @@
     </div>
     <?php endif; ?>
 </main>
+
+<script>
+function toggleComentarios(id) {
+    const div = document.getElementById('comentarios-' + id);
+    div.classList.toggle('hidden');
+}
+</script>
 </body>
 </html>

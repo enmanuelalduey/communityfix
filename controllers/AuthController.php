@@ -12,13 +12,16 @@ class AuthController {
         $error = '';
 
         if (isset($_SESSION['id_usuario'])) {
-        header('Location: /communityfix/views/dashboard.php');
-        exit();
-        
+            if ($_SESSION['id_rol'] == 1) {
+                header('Location: /communityfix/?action=admin');
+            } else {
+                header('Location: /communityfix/views/dashboard.php');
+            }
+            exit();
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $correo    = trim($_POST['correo']    ?? '');
+            $correo     = trim($_POST['correo']     ?? '');
             $contrasena = $_POST['contrasena'] ?? '';
 
             if (empty($correo) || empty($contrasena)) {
@@ -26,7 +29,11 @@ class AuthController {
             } elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
                 $error = 'Ingresa un correo válido.';
             } elseif ($this->authService->login($correo, $contrasena)) {
-                header('Location: /communityfix/views/dashboard.php');
+                if ($_SESSION['id_rol'] == 1) {
+                    header('Location: /communityfix/?action=admin');
+                } else {
+                    header('Location: /communityfix/views/dashboard.php');
+                }
                 exit();
             } else {
                 $error = 'Correo o contraseña incorrectos.';
@@ -41,8 +48,8 @@ class AuthController {
         $exito = '';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre    = trim($_POST['nombre']    ?? '');
-            $correo    = trim($_POST['correo']    ?? '');
+            $nombre     = trim($_POST['nombre']     ?? '');
+            $correo     = trim($_POST['correo']     ?? '');
             $contrasena = $_POST['contrasena'] ?? '';
             $confirmar  = $_POST['confirmar']  ?? '';
 
